@@ -52,7 +52,10 @@ const Login = () => {
             {isRegistering ? 'Create a new account' : 'Sign in to your account'}
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="text-black-600 text-sm text-center">
+   The server might take up to 30 seconds to start. Please wait patiently.
+        </div>
+<form className="mt-4 space-y-6" onSubmit={handleSubmit}>
           {error && <div className="text-red-500 text-center">{error}</div>}
           <div className="rounded-md shadow-sm -space-y-px">
             {isRegistering && (
