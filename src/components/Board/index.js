@@ -3,7 +3,7 @@ import rough from "roughjs";
 import boardContext from "../../store/board-context";
 import { TOOL_ACTION_TYPES, TOOL_ITEMS } from "../../constants";
 import toolboxContext from "../../store/toolbox-context";
-
+import updateCanvasElements from "../../utils/api";
 import classes from "./index.module.css";
 
 function Board() {
@@ -97,8 +97,16 @@ function Board() {
     boardMouseMoveHandler(event);
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = async () => {
     boardMouseUpHandler();
+    try {
+      //get canvas id from the url and pass in the updatecanvas function
+      const canvasId = window.location.pathname.split('/').pop();
+      await updateCanvasElements(canvasId, elements);
+    } catch (error) {
+      console.error('Failed to save canvas:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   return (

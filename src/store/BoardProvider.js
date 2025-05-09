@@ -1,4 +1,5 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useCallback, useReducer, useEffect } from "react";
+import { io } from "socket.io-client";
 
 import boardContext from "./board-context";
 import { BOARD_ACTIONS, TOOL_ACTION_TYPES, TOOL_ITEMS } from "../constants";
@@ -11,6 +12,23 @@ import getStroke from "perfect-freehand";
 
 const boardReducer = (state, action) => {
   switch (action.type) {
+    case BOARD_ACTIONS.INITIALIZE_ELEMENTS: {
+      const elements = action.payload.elements.map(element => {
+        if (element.type === TOOL_ITEMS.BRUSH && element.points) {
+          return {
+            ...element,
+            path: new Path2D(getSvgPathFromStroke(getStroke(element.points)))
+          };
+        }
+        return element;
+      });
+      return {
+        ...state,
+        elements,
+        history: [elements],
+        index: 0
+      };
+    }
     case BOARD_ACTIONS.CHANGE_TOOL: {
       return {
         ...state,
@@ -47,6 +65,7 @@ const boardReducer = (state, action) => {
       const newElements = [...state.elements];
       const index = state.elements.length - 1;
       const { type } = newElements[index];
+      console.log(newElements[index]);
       switch (type) {
         case TOOL_ITEMS.LINE:
         case TOOL_ITEMS.RECTANGLE:
@@ -140,19 +159,51 @@ const boardReducer = (state, action) => {
   }
 };
 
-const initialBoardState = {
-  activeToolItem: TOOL_ITEMS.BRUSH,
-  toolActionType: TOOL_ACTION_TYPES.NONE,
-  elements: [],
-  history: [[]],
-  index: 0,
-};
+const BoardProvider = ({ children, initialElements }) => {
+  const initialBoardState = {
+    activeToolItem: TOOL_ITEMS.BRUSH,
+    toolActionType: TOOL_ACTION_TYPES.NONE,
+    elements: [],
+    history: [[]],
+    index: 0,
+  };
 
-const BoardProvider = ({ children }) => {
   const [boardState, dispatchBoardAction] = useReducer(
     boardReducer,
     initialBoardState
   );
+
+  // Initialize socket connection
+  useEffect(() => {
+    const socket = io("https://backend-6-cnlo.onrender.com");
+    const canvasId = window.location.pathname.split('/').pop();
+
+    // Join canvas room
+    socket.emit("joinCanvas", canvasId);
+
+    // Listen for canvas updates from other users
+    socket.on("canvasUpdated", (updatedElements) => {
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.INITIALIZE_ELEMENTS,
+        payload: { elements: updatedElements }
+      });
+    });
+
+    // Cleanup on unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Initialize elements when initialElements changes
+  useEffect(() => {
+    if (initialElements?.elements) {
+      dispatchBoardAction({
+        type: BOARD_ACTIONS.INITIALIZE_ELEMENTS,
+        payload: { elements: initialElements.elements }
+      });
+    }
+  }, [initialElements]);
 
   const changeToolHandler = (tool) => {
     dispatchBoardAction({
@@ -214,6 +265,14 @@ const BoardProvider = ({ children }) => {
     if (boardState.toolActionType === TOOL_ACTION_TYPES.DRAWING) {
       dispatchBoardAction({
         type: BOARD_ACTIONS.DRAW_UP,
+      });
+
+      // Emit canvas update to other users
+      const socket = io("https://backend-6-cnlo.onrender.com");
+      const canvasId = window.location.pathname.split('/').pop();
+      socket.emit("canvasUpdate", {
+        canvasId,
+        elements: boardState.elements
       });
     }
     dispatchBoardAction({

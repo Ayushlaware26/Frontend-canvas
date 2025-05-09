@@ -1,19 +1,22 @@
-import Board from "./components/Board";
-import Toolbar from "./components/Toolbar";
-import Toolbox from "./components/Toolbox";
-import BoardProvider from "./store/BoardProvider";
-import ToolboxProvider from "./store/ToolboxProvider";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/login';
+import Profile from './pages/profile';
+import CanvasView from './pages/CanvasView';
+import RegistrationSuccess from './pages/registration';
 
-function App() {
+const App = () => {
   return (
-    <BoardProvider>
-      <ToolboxProvider>
-        <Toolbar />
-        <Board />
-        <Toolbox />
-      </ToolboxProvider>
-    </BoardProvider>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/canvas/:id" element={<CanvasView />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/register-success" element={<RegistrationSuccess />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
