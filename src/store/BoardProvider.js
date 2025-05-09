@@ -63,7 +63,7 @@ const boardReducer = (state, action) => {
     case BOARD_ACTIONS.DRAW_MOVE: {
       const { clientX, clientY } = action.payload;
       const newElements = [...state.elements];
-      const index = state.elements.length - 1;
+      const index = state.elements.length > 0 ? state.elements.length - 1 : 0;
       const { type } = newElements[index];
       console.log(newElements[index]);
       switch (type) {
