@@ -22,7 +22,7 @@ const CanvasView = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:3000/canvas/${id}`, {
+        const response = await fetch(`https://backend-2-u2sy.onrender.com/canvas/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

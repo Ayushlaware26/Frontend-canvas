@@ -31,7 +31,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3000/users/profile', {
+      const response = await fetch('https://backend-2-u2sy.onrender.com/users/profile', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -61,7 +61,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3000/canvas', {
+      const response = await fetch('https://backend-2-u2sy.onrender.com/canvas', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3000/canvas', {
+      const response = await fetch('https://backend-2-u2sy.onrender.com/canvas', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -132,7 +132,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/canvas/${sharingCanvasId}/share`, {
+      const response = await fetch(`https://backend-2-u2sy.onrender.com/canvas/${sharingCanvasId}/share`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -168,7 +168,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/canvas/${canvasId}`, {
+      const response = await fetch(`https://backend-2-u2sy.onrender.com/canvas/${canvasId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -185,7 +185,20 @@ const Profile = () => {
       setCanvases(canvases.filter(canvas => canvas._id !== canvasId));
     } catch (error) {
       console.error('Delete canvas error:', error);
-      setError(error.message);
+      setError(`${error.message} - Refreshing page in 3 seconds...`);
+      
+      // Start countdown
+      let countdown = 3;
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        setError(`${error.message} - Refreshing page in ${countdown} seconds...`);
+        
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          window.location.reload();
+        }
+      }, 1000);
+
       handleTokenExpiration(error);
     }
   };
