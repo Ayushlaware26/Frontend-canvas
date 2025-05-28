@@ -6,7 +6,7 @@ const updateCanvasElements = async (canvasId, elements) => {
             throw new Error('No authentication token found');
         }
 
-        const response = await fetch(`https://backend-2-u2sy.onrender.com/canvas/${canvasId}`, {
+        const response = await fetch(`https://backend-2-opa9.onrender.com/canvas/${canvasId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
