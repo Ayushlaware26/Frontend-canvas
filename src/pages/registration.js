@@ -7,7 +7,7 @@ const RegistrationSuccess = () => {
   const handleGoBack = () => {
     navigate('/');
   };
-
+//comment test
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50">
       <div className="max-w-md w-full space-y-6 p-8 bg-white rounded-lg shadow-md text-center">
