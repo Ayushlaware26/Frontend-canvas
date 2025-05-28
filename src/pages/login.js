@@ -12,8 +12,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = isRegistering
-      ? 'https://backend-2-u2sy.onrender.com/users/register'
-      : 'https://backend-2-u2sy.onrender.com/users/login';
+      ? 'https://backend-2-opa9.onrender.com/users/register'
+      : 'https://backend-2-opa9.onrender.com/users/login';
 
     const body = isRegistering ? { name, email, password } : { email, password };
 
