@@ -273,6 +273,7 @@ const BoardProvider = ({ children, initialElements }) => {
     });
   }, []);
 
+
   const boardContextValue = {
     activeToolItem: boardState.activeToolItem,
     elements: boardState.elements,
