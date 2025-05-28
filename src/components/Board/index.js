@@ -21,10 +21,20 @@ function Board() {
   } = useContext(boardContext);
   const { toolboxState } = useContext(toolboxContext);
 
+  // Handle canvas size and window resizing
   useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const updateCanvasSize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+
+    return () => {
+      window.removeEventListener('resize', updateCanvasSize);
+    };
   }, []);
 
   useEffect(() => {
@@ -46,6 +56,9 @@ function Board() {
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
+    
+    // Clear the canvas before redrawing
+    context.clearRect(0, 0, canvas.width, canvas.height);
     context.save();
 
     const roughCanvas = rough.canvas(canvas);
@@ -61,23 +74,19 @@ function Board() {
         case TOOL_ITEMS.BRUSH:
           context.fillStyle = element.stroke;
           context.fill(element.path);
-          context.restore();
           break;
         case TOOL_ITEMS.TEXT:
           context.textBaseline = "top";
           context.font = `${element.size}px Caveat`;
           context.fillStyle = element.stroke;
           context.fillText(element.text, element.x1, element.y1);
-          context.restore();
           break;
         default:
           throw new Error("Type not recognized");
       }
     });
 
-    return () => {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-    };
+    context.restore();
   }, [elements]);
 
   useEffect(() => {
@@ -100,12 +109,10 @@ function Board() {
   const handleMouseUp = async () => {
     boardMouseUpHandler();
     try {
-      //get canvas id from the url and pass in the updatecanvas function
       const canvasId = window.location.pathname.split('/').pop();
       await updateCanvasElements(canvasId, elements);
     } catch (error) {
       console.error('Failed to save canvas:', error);
-      // You might want to show an error message to the user here
     }
   };
 

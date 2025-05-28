@@ -1,5 +1,4 @@
 import React, { useCallback, useReducer, useEffect } from "react";
-import { io } from "socket.io-client";
 
 import boardContext from "./board-context";
 import { BOARD_ACTIONS, TOOL_ACTION_TYPES, TOOL_ITEMS } from "../constants";
@@ -173,28 +172,6 @@ const BoardProvider = ({ children, initialElements }) => {
     initialBoardState
   );
 
-  // Initialize socket connection
-  useEffect(() => {
-    const socket = io("https://backend-6-cnlo.onrender.com");
-    const canvasId = window.location.pathname.split('/').pop();
-
-    // Join canvas room
-    socket.emit("joinCanvas", canvasId);
-
-    // Listen for canvas updates from other users
-    socket.on("canvasUpdated", (updatedElements) => {
-      dispatchBoardAction({
-        type: BOARD_ACTIONS.INITIALIZE_ELEMENTS,
-        payload: { elements: updatedElements }
-      });
-    });
-
-    // Cleanup on unmount
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
   // Initialize elements when initialElements changes
   useEffect(() => {
     if (initialElements?.elements) {
@@ -265,14 +242,6 @@ const BoardProvider = ({ children, initialElements }) => {
     if (boardState.toolActionType === TOOL_ACTION_TYPES.DRAWING) {
       dispatchBoardAction({
         type: BOARD_ACTIONS.DRAW_UP,
-      });
-
-      // Emit canvas update to other users
-      const socket = io("https://backend-6-cnlo.onrender.com");
-      const canvasId = window.location.pathname.split('/').pop();
-      socket.emit("canvasUpdate", {
-        canvasId,
-        elements: boardState.elements
       });
     }
     dispatchBoardAction({

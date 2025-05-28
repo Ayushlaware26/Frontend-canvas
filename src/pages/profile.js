@@ -31,7 +31,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('https://backend-9-px2l.onrender.com/users/profile', {
+      const response = await fetch('http://localhost:3000/users/profile', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -61,7 +61,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('https://backend-9-px2l.onrender.com/canvas', {
+      const response = await fetch('http://localhost:3000/canvas', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch('https://backend-9-px2l.onrender.com/canvas', {
+      const response = await fetch('http://localhost:3000/canvas', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -132,7 +132,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch(`https://backend-9-px2l.onrender.com/canvas/${sharingCanvasId}/share`, {
+      const response = await fetch(`http://localhost:3000/canvas/${sharingCanvasId}/share`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -168,7 +168,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch(`https://backend-9-px2l.onrender.com/canvas/${canvasId}`, {
+      const response = await fetch(`http://localhost:3000/canvas/${canvasId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
